@@ -154,7 +154,7 @@ class Game:
     def __init__(self):
         self.stock_deck = card.StockDeck(full=True)
 
-        # decks are generated from left to right
+        # seven piles are generated from left to right
         self.decks = [TableauPile() for __ in range(7)]
         
         for i, v in enumerate(self.decks):
@@ -162,7 +162,7 @@ class Game:
                 v.hidden_deck.put(self.stock_deck.take())
             # reveals the top-most hidden card
             v.shown_deck.put(v.hidden_deck.take())
-            
+        
         self.foundations = [SuitDeck(k) for k in card.CardSuit]
         self.hand_deck = card.CardDeck()
 
