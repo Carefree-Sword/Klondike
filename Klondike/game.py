@@ -22,13 +22,20 @@ class TableauPile:
         self.shown_deck.put(puts_card)
 
     def verify(self, verify_card: card.Card) -> bool:
-        if self.shown_deck:
+        # Checks if there exists any cards in the tableau pile
+        # self.hidden_deck is implicitly empty if self.shown_deck is
+        if self.shown_deck: 
             logger.debug(f"card is less than floor: {self.shown_deck[-1].face.value - verify_card.face.value == 1}")
             logger.debug(f"card of different color: {not verify_card.suit.is_same_color(self.shown_deck[-1].suit)}")
+            
+            # Checks if the card to be placed is one below and is of a different
+            # colour than the previous top card.
             return self.shown_deck[-1].face.value - verify_card.face.value == 1 \
                    and not verify_card.suit.is_same_color(self.shown_deck[-1].suit)
         else:
             logger.debug(f"card is king: {card.CardFace.KING == verify_card.face.value}")
+            
+            # There are no cards in the tableau, thus only Kings can be placed there.
             return card.CardFace.KING == verify_card.face.value
 
     @property
