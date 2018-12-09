@@ -6,6 +6,9 @@ from .base import logger
 
 
 class TableauPile:
+    """
+    Base class for the seven tableaus in Klondike solitaire
+    """
     def __init__(self):
         self.hidden_deck = card.HiddenDeck()
         self.shown_deck = card.ShownDeck()
@@ -13,17 +16,32 @@ class TableauPile:
         self.current = 0
 
     def take(self, n: int = 1) -> card.Card or card.Iterable:
+        # Removes the n-th card (1-based indexing) from the top of
+        # the revealed deck. If n > 1, remove all cards from the 
+        # n-th card to the top-most card.
         x = self.shown_deck.take(n)
+        
+        # Checks if there are no revealed cards, but hidden cards
+        # still exist within the tableau pile.
         if not self.shown_deck and self.hidden_deck:
+            # If so, reveals the top-most hidden card
             self.shown_deck.put(self.hidden_deck.take(1))
+            
+        # Returns the card or card iterator
         return x
 
     def put(self, puts_card: card.Card or card.Iterable):
+        """
+        Push card onto the top of the shown deck. If card is
+        iterable, push all cards after the iterable until
+        next(puts_card) == None or if next(puts_card) raises an
+        exception.
+        """
         self.shown_deck.put(puts_card)
 
     def verify(self, verify_card: card.Card) -> bool:
         # Checks if there exists any cards in the tableau pile
-        # self.hidden_deck is implicitly empty if self.shown_deck is
+        # hidden deck is implicitly empty if shown deck is
         if self.shown_deck: 
             logger.debug(f"card is less than floor: {self.shown_deck[-1].face.value - verify_card.face.value == 1}")
             logger.debug(f"card of different color: {not verify_card.suit.is_same_color(self.shown_deck[-1].suit)}")
@@ -84,12 +102,23 @@ class TableauPile:
 
 
 class SuitDeck(card.CardDeck):
+    """
+    The SuitDeck class is the base class for the four foundations.
+    It is initially empty and can only be filled with cards of the
+    same suit and is exactly one above the card prior.
+    """
     def __init__(self, suit: card.CardSuit, full=False):
         self._suit = suit
         super().__init__(full)
 
     def __put(self, puts_card: card.Card):
+        # Checks if the card to be pushed onto the deck is of the
+        # same suit as the deck.
         if self._suit == puts_card.suit:
+            # First checks if the card is an Ace. If so, deck is
+            # implicitly empty and will accept the ace. Otherwise,
+            # it checks if the card face is exactly one above the card
+            # prior.
             if puts_card.face == card.CardFace.ACE if not self.deck else \
                     puts_card.face.value - self.deck[-1].face.value == 1:
                 self._deck.append(puts_card)
