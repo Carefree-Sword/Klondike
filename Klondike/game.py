@@ -33,6 +33,9 @@ class TableauPile:
 
     @property
     def deck(self):
+        """
+        Returns the revealed portion of the tableau pile
+        """
         return self.shown_deck.deck
 
     def __getitem__(self, item):
@@ -46,7 +49,9 @@ class TableauPile:
 
     def __len__(self):
         return len(self.hidden_deck) + len(self.shown_deck)
-
+    
+    # For convenience; so that we can call it as self.iterator_deck
+    # instead of self.iterator_deck()
     @property
     def iterator_deck(self):
         return [*self.hidden_deck, *self.shown_deck]
@@ -113,13 +118,15 @@ class Game:
     def __init__(self):
         self.stock_deck = card.StockDeck(full=True)
 
-        # decks are generated left to right
+        # decks are generated from left to right
         self.decks = [TableauPile() for __ in range(7)]
+        
         for i, v in enumerate(self.decks):
             for __ in range(i + 1):
                 v.hidden_deck.put(self.stock_deck.take())
-            # show one card
+            # reveals the top-most hidden card
             v.shown_deck.put(v.hidden_deck.take())
+            
         self.foundations = [SuitDeck(k) for k in card.CardSuit]
         self.hand_deck = card.CardDeck()
 
@@ -186,7 +193,11 @@ class Game:
             raise MoveError("invalid move")
 
     def is_finished(self) -> bool:
-        return any(len(i) == 13 for i in self.foundations)
+        """
+        Returns the current game state. That is, it returns True if all
+        four foundations have 13 cards each. Returns False, otherwise
+        """
+        return not any(len(i) != 13 for i in self.foundations)
 
     def __bool__(self) -> bool:
-        return not self.is_finished()
+        return self.is_finished()
