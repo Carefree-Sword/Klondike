@@ -204,7 +204,7 @@ class Game:
         Returns the current game state. That is, it returns True if all
         four foundations have 13 cards each. Returns False, otherwise
         """
-        return not any(len(i) != 13 for i in self.foundations)
+        return all(len(i) == 13 for i in self.foundations)
 
     def __bool__(self) -> bool:
         return self.is_finished()
