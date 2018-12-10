@@ -135,8 +135,7 @@ class SuitDeck(card.CardDeck):
                    and verify_card.suit == self._suit
         else:
             logger.debug(f"card is ace: {card.CardFace.ACE == verify_card.face}")
-            logger.debug(f"card is same suit as pile: {verify_card.suit == self._suit}")
-            return card.CardFace.ACE == verify_card.face and verify_card.suit == self._suit
+            return card.CardFace.ACE == verify_card.face
 
     def take(self, n=0):
         raise NotImplementedError
@@ -180,7 +179,7 @@ class Game:
     def move_info(self):
         lines = [
             ["XX", self.stock_deck[-1].short, "  ",
-             *(v[-1].short if v else f"X{card.CardSuit.list()[i][0].upper()}" for i,v in enumerate(self.foundations))],
+             *(v[-1].short if v else f"[]" for __,v in enumerate(self.foundations))],
             [""],
             [f"d{i}" for i in range(1,8)]
         ]
