@@ -15,7 +15,7 @@ if __name__ == '__main__':
         cmd = input(" >>> ")
         parser_obj._parse_(cmd)
 
-        if game_obj:
+        if not game_obj:
             break
 
     print("done")
