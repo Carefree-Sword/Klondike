@@ -185,6 +185,10 @@ class Game:
             raise MoveError("invalid move")
 
     def is_finished(self) -> bool:
+        """
+        Returns the current game state. That is, it returns True if all
+        four foundations have 13 cards each. Returns False, otherwise
+        """
         return all(len(i) == 13 for i in self.foundations)
 
     def __bool__(self) -> bool:
