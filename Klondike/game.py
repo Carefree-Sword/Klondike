@@ -236,4 +236,4 @@ class Game:
         return all(len(i) == 13 for i in self.foundations)
 
     def __bool__(self) -> bool:
-        return self.is_finished()
+        return not self.is_finished()
